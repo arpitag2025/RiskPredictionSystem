@@ -1,0 +1,17 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Cache
+.cache/
+
+# Python
+__pycache__/
+venv/
+.env
+
+# Large files
+*.csv
+*.parquet
+*.pkl

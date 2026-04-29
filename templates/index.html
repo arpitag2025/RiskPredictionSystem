@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Healthcare Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+<h1>Healthcare Risk Dashboard</h1>
+
+<button onclick="getAnalyze()">Analyze All</button>
+
+<input id="stateInput" placeholder="Enter state (CA)">
+<button onclick="getFiltered()">Filter</button>
+
+<button onclick="getHighRisk()">High Risk</button>
+<button onclick="getSummary()">Summary</button>
+
+<table id="table">
+    <thead>
+        <tr>
+            <th>Hospital</th>
+            <th>State</th>
+            <th>Total Payment</th>
+            <th>Medicare</th>
+            <th>Risk Score</th>
+            <th>Risk Level</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+function renderTable(data) {
+    const tbody = document.querySelector("#table tbody");
+    tbody.innerHTML = "";
+
+    data.forEach(item => {
+        let row = `
+            <tr>
+                <td>${item.hospital}</td>
+                <td>${item.state}</td>
+                <td>${item.total_payment}</td>
+                <td>${item.medicare_payment}</td>
+                <td>${item.risk_score}</td>
+                <td class="${item.risk_level.toLowerCase()}">${item.risk_level}</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+function getAnalyze() {
+    fetch('/analyze')
+        .then(res => res.json())
+        .then(data => renderTable(data.data));
+}
+
+function getFiltered() {
+    const state = document.getElementById("stateInput").value;
+    fetch(`/analyze?state=${state}`)
+        .then(res => res.json())
+        .then(data => renderTable(data.data));
+}
+
+function getHighRisk() {
+    fetch('/high-risk')
+        .then(res => res.json())
+        .then(data => renderTable(data.high_risk_providers));
+}
+
+function getSummary() {
+    fetch('/summary')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector("#table tbody");
+            tbody.innerHTML = "";
+
+            data.summary.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>State Avg</td>
+                        <td>${item.provider_state}</td>
+                        <td>${item.avg_payment}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                `;
+            });
+        });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+Starting background process...
+Background process started with PID 1540
+[ERROR] 2026-04-28 19:48:49.772 PM -- Warning: unexpected file /home/arpitavingodbole/.gemini/extensions/extension-enablement.json in extensions directory.
+[INFO] 2026-04-28 19:48:49.782 PM -- Loading extension: vertex (version: 0.1.0)
+Ignore file not found: /google/devshell/editor/code-oss-for-cloud-shell/.geminiignore, continue without it.
+Ignore file not found: /google/devshell/editor/code-oss-for-cloud-shell/.aiexclude, continue without it.
+[DEBUG] [MemoryDiscovery] Loading server hierarchical memory for CWD: /google/devshell/editor/code-oss-for-cloud-shell (importFormat: tree)
+[DEBUG] [MemoryDiscovery] Searching for GEMINI.md starting from CWD: /google/devshell/editor/code-oss-for-cloud-shell
+[DEBUG] [MemoryDiscovery] Determined project root: None
+[DEBUG] [MemoryDiscovery] deduplication: keeping /home/arpitavingodbole/.gemini/extensions/vertex/GEMINI.md (dev: 2065, ino: 131107)
+[DEBUG] [MemoryDiscovery] Successfully read and processed imports: /home/arpitavingodbole/.gemini/extensions/vertex/GEMINI.md (Length: 13882)
+Ignore file not found: /google/devshell/editor/code-oss-for-cloud-shell/.geminiignore, continue without it.
+Ignore file not found: /google/devshell/editor/code-oss-for-cloud-shell/.aiexclude, continue without it.
+Ignore file not found: /google/devshell/editor/code-oss-for-cloud-shell/.geminiignore, continue without it.
+Ignore file not found: /google/devshell/editor/code-oss-for-cloud-shell/.aiexclude, continue without it.
+Ignore file not found: /google/devshell/editor/code-oss-for-cloud-shell/.geminiignore, continue without it.
+Ignore file not found: /google/devshell/editor/code-oss-for-cloud-shell/.aiexclude, continue without it.
+Loading extension: vertex
+[MCP error] Error during discovery for MCP server 'VertexMcpServer': spawn ${extensionPath}/run.sh ENOENT Error: spawn ${extensionPath}/run.sh ENOENT
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'spawn ${extensionPath}/run.sh',
+  path: '${extensionPath}/run.sh',
+  spawnargs: []
+}
+Scheduling MCP context refresh...
+Executing MCP context refresh...
+[DEBUG] [MemoryDiscovery] Loading server hierarchical memory for CWD: /google/devshell/editor/code-oss-for-cloud-shell (importFormat: tree)
+[DEBUG] [MemoryDiscovery] Searching for GEMINI.md starting from CWD: /google/devshell/editor/code-oss-for-cloud-shell
+Hook registry initialized with 0 hook entries
+Hook system initialized successfully
+[DEBUG] [MemoryDiscovery] Determined project root: None
+[DEBUG] [MemoryDiscovery] Loading environment memory for trusted root: /google/devshell/editor/code-oss-for-cloud-shell (Stopping at trusted root: /google/devshell/editor/code-oss-for-cloud-shell — no git root found)
+[DEBUG] [MemoryDiscovery] Starting upward search from /google/devshell/editor/code-oss-for-cloud-shell stopping at /google/devshell/editor/code-oss-for-cloud-shell
+[DEBUG] [MemoryDiscovery] deduplication: keeping /home/arpitavingodbole/.gemini/extensions/vertex/GEMINI.md (dev: 2065, ino: 131107)
+[DEBUG] [MemoryDiscovery] Successfully read and processed imports: /home/arpitavingodbole/.gemini/extensions/vertex/GEMINI.md (Length: 13882)
+[DEBUG] [MemoryDiscovery] deduplication: keeping /home/arpitavingodbole/.gemini/extensions/vertex/GEMINI.md (dev: 2065, ino: 131107)
+[DEBUG] [MemoryDiscovery] Successfully read and processed imports: /home/arpitavingodbole/.gemini/extensions/vertex/GEMINI.md (Length: 13882)
+MCP context refresh complete.
+[STARTUP] StartupProfiler.flush() called with 1 phases
+[STARTUP] Recording metric for phase: discover_tools duration: 5211.2443680000015
+[INFO] 2026-04-28 19:48:55.608 PM -- [Config] Using CCPA Auth:
+[INFO] 2026-04-28 19:48:55.609 PM -- [Config] Skipping LOGIN_WITH_GOOGLE due to headless mode. Attempting COMPUTE_ADC.
+Keychain initialization encountered an error: Cannot find package 'keytar' imported from /google/devshell/editor/code-oss-for-cloud-shell/extensions/geminicodeassist/agent/a2a-server.mjs
+Using FileKeychain fallback for secure storage.
