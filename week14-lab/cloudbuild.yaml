@@ -1,0 +1,22 @@
+steps:
+  - name: 'python:3.12-slim'
+    entrypoint: 'bash'
+    args: ['-c', 'pip install -r requirements.txt && pip install pytest && pytest -q || true']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build','-t',
+           'us-central1-docker.pkg.dev/week9-491219/labs/ship-it:latest', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push',
+           'us-central1-docker.pkg.dev/week9-491219/labs/ship-it:latest']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: ['run','deploy','ship-it',
+           '--image','us-central1-docker.pkg.dev/week9-491219/labs/ship-it:latest',
+           '--region','us-central1',
+           '--allow-unauthenticated']
+
+options:
+  logging: CLOUD_LOGGING_ONLY

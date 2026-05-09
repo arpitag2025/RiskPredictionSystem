@@ -1,4 +1,5 @@
-google-cloud-language
-google-cloud-firestore
-google-cloud-storage
-functions-framework
+Flask
+google-cloud-bigquery
+numpy
+scikit-learn
+gunicorn

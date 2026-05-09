@@ -1,231 +1,3 @@
-python3 -V
-tar -xf google-cloud-cli-darwin-x86_64.tar.gz
-tar -xf google-cloud-cli-darwin-x86_64
-ls
-cd
-gcloud auth list
-gcloud config list
-terrasync-images-arpita-92731
-gsutil mb gs://terrasync-images-...
-gsutil cp sample.jpg gs://terrasync-images-...
-gsutil lifecycle set lifecycle.json gs://...
-gcloud compute disks create db-us-data-disk ...
-gcloud compute instances attach-disk db-us ...
-gcloud compute ssh db-us --tunnel-through-iap
-BUCKET=terrasync-images-arpita-92731
-gsutil mb -l US gs://$BUCKET
-echo "sample" > sample.jpg
-gsutil cp sample.jpg gs://$BUCKET/
-gsutil ls gs://$BUCKET
-cat > lifecycle.json <<'EOF'
-{
-  "rule": [
-    {
-      "action": { "type": "SetStorageClass", "storageClass": "NEARLINE" },
-      "condition": { "age": 90 }
-    }
-  ]
-}
-EOF
-
-gsutil lifecycle set lifecycle.json gs://$BUCKET
-gsutil lifecycle get gs://$BUCKET
-gcloud compute disks create db-us-data-disk   --size=20GB   --type=pd-ssd   --zone=us-central1-c
-gcloud compute instances attach-disk db-us   --disk=db-us-data-disk   --zone=us-central1-c
-gcloud compute ssh db-us --zone us-central1-c --tunnel-through-iap
-gcloud compute ssh web-us --zone us-central1-c
-gcloud compute ssh db-us --zone us-central1-c --tunnel-through-iap
-gcloud compute ssh web-us --zone us-central1-c
-nc -zv <DB-US-INTERNAL-IP> 5432
-gcloud compute ssh web-us --zone us-central1-c
-arpitavingodbole@cloudshell:~ (cs446-vm1)$
-gsutil ls
-gsutil lifecycle get gs://<EXACT-BUCKET-NAME>
-gsutil lifecycle get gs://terrasync-images-arpita-92731
-gcloud compute networks subnets create subnet-eu-public   --network=terrasync-vpc   --region=europe-west1   --range=10.20.1.0/24
-gcloud compute instances get-serial-port-output web-eu --zone=europe-west1-b --port=1 | tail -n 200
-gcloud compute instances delete web-eu --zone=europe-west1-b
-gcloud compute instances create web-eu   --zone=europe-west1-b   --subnet=subnet-eu-public   --tags=web-server   --image-family=ubuntu-2204-lts   --image-project=ubuntu-os-cloud   --metadata=startup-script='#!/bin/bash
-set -eux
-apt-get update -y
-apt-get install -y nginx
-echo "Hello from TerraSync Europe!" > /var/www/html/index.html
-systemctl enable --now nginx'
-gcloud compute instances delete web-eu   --zone=europe-west1-b
-y
-gcloud compute instances create web-eu   --zone=europe-west1-b   --subnet=subnet-eu-public   --tags=web-server   --machine-type=e2-micro   --image-family=ubuntu-2204-lts   --image-project=ubuntu-os-cloud   --metadata=startup-script='#!/bin/bash
-set -eux
-apt-get update -y
-apt-get install -y nginx
-echo "Hello from TerraSync Europe!" > /var/www/html/index.html
-systemctl enable nginx
-systemctl restart nginx'
-gcloud compute ssh web-us --zone us-central1-c
-gcloud services enable cloudfunctions.googleapis.com   vision.googleapis.com   firestore.googleapis.com   eventarc.googleapis.com   cloudbuild.googleapis.com   run.googleapis.com
-gcloud storage buckets create gs://riskpredictionsystem-image-pipeline   --location=us-central1
-mkdir ~/image-pipeline && cd ~/image-pipeline
-nano main.py
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=YOUR_PROJECT_ID-image-pipeline"   --service-account=YOUR_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-nano requirements.txt
-nano main.py
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=YOUR_PROJECT_ID-image-pipeline"   --service-account=YOUR_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=YOUR_PROJECT_ID-image-pipeline"   --service-account=871013170557-compute@developer.gserviceaccount.com
-clear
-quit
-exit
-gcloud services enable cloudfunctions.googleapis.com   vision.googleapis.com   firestore.googleapis.com   eventarc.googleapis.com   cloudbuild.googleapis.com   run.googleapis.com
-gcloud storage buckets create gs://week9-491219-image-pipeline \
-gcloud storage buckets create gs://week9-491219-image-pipeline \--location=us-central1
-gcloud storage buckets create gs://week9-491219-image-pipeline \ --location=us-central1
-clear
-mkdir ~/image-pipeline && cd ~/image-pipeline
-why bri
-cd ~/image-pipeline
-nano main.py
-ls
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=YOUR_PROJECT_ID-image-pipeline"   --service-account=YOUR_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-gcloud functions deploy process-image \
-gcloud projects describe YOUR_PROJECT_ID --format="value(projectNumber)"
-gcloud projects describe week9-491219 --format="value(projectNumber)"
--
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/cloudbuild.builds.builder
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-gcloud storage rm -r gs://week9-491219-image-pipeline
-gcloud storage buckets create gs://week9-491219-image-pipeline   --location=us-central1
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/eventarc.eventReceiver
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/run.invoker
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-nano main.py
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-SERVICE_AGENT=$(gsutil kms serviceaccount -p week9-491219)
-echo $SERVICE_AGENT
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:$SERVICE_AGENT   --role=roles/pubsub.publisher
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/
-gcloud functions logs read process-image --region=us-central1 --limit=20
-gcloud firestore databases list
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/
-gcloud functions logs read process-image --region=us-central1 --limit=20
-nano main.py
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-cd ..
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/
-gcloud functions logs read process-image --region=us-central1 --limit=20
-clear
-gcloud functions logs read process-image --region=us-central1 --limit=20
-ls
-cd image-pipeline
-nano main.py
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-gcloud firestore databases list
-nano main.py
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/
-gcloud functions logs read process-image --region=us-central1 --limit=20
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/pic.jpg
-gcloud functions logs read process-image --region=us-central1 --limit=10
-cat ~/image-pipeline/main.py | grep "database"
-cd ..
-cat > ~/image-pipeline/main.py << 'EOF'
-import functions_framework
-from google.cloud import vision, firestore
-
-db = firestore.Client(project="week9-491219", database="db-1")
-vision_client = vision.ImageAnnotatorClient()
-
-@functions_framework.cloud_event
-def process_image(cloud_event):
-    data = cloud_event.data
-    bucket = data["bucket"]
-    name = data["name"]
-
-    if not name.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp')):
-        print(f"Skipping non-image file: {name}")
-        return
-
-    image = vision.Image(source=vision.ImageSource(
-        gcs_image_uri=f"gs://{bucket}/{name}"
-    ))
-    response = vision_client.document_text_detection(image=image)
-    text = response.full_text_annotation.text if response.full_text_annotation else ""
-
-    db.collection("image_analysis_results").add({
-        "fileName": name,
-        "extractedText": text,
-        "processedAt": firestore.SERVER_TIMESTAMP,
-        "characterCount": len(text)
-    })
-    print(f"Processed {name}: extracted {len(text)} characters")
-EOF
-
-cd image-pipeline
-gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/pic.jpg
-gcloud functions logs read process-image --region=us-central1 --limit=10
-cat > ~/image-pipeline/main.py << 'EOF'
-import functions_framework
-from google.cloud import vision, firestore
-
-db = firestore.Client(project="week9-491219", database="db-1")
-vision_client = vision.ImageAnnotatorClient()
-
-@functions_framework.cloud_event
-def process_image(cloud_event):
-    data = cloud_event.data
-    bucket = data["bucket"]
-    name = data["name"]
-
-    if not name.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp')):
-        print(f"Skipping non-image file: {name}")
-        return
-
-    image = vision.Image(source=vision.ImageSource(
-        gcs_image_uri=f"gs://{bucket}/{name}"
-    ))
-    response = vision_client.document_text_detection(image=image)
-    text = response.full_text_annotation.text if response.full_text_annotation else ""
-
-    db.collection("image_analysis_results").add({
-        "fileName": name,
-        "extractedText": text,
-        "processedAt": firestore.SERVER_TIMESTAMP,
-        "characterCount": len(text)
-    })
-    print(f"Processed {name}: extracted {len(text)} characters")
-EOF
-
-nano main.py
-gcloud functions delete process-image --region=us-central1 --gen2
-cat ~/image-pipeline/main.py
-cd ~/image-pipeline && gcloud functions deploy process-image   --gen2   --runtime=python311   --region=us-central1   --source=.   --entry-point=process_image   --trigger-event-filters="type=google.cloud.storage.object.v1.finalized"   --trigger-event-filters="bucket=week9-491219-image-pipeline"   --service-account=903582864029-compute@developer.gserviceaccount.com
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/pic3.jpg
-gcloud functions logs read process-image --region=us-central1 --limit=10
-cat ~/image-pipeline/main.py
-gcloud functions describe process-image --region=us-central1 --gen2
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/testfinal.jpg
-gcloud functions logs read process-image --region=us-central1 --limit=5
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/datastore.user
-gcloud auth login
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/pic4.jpg
-gcloud functions logs read process-image --region=us-central1 --limit=5
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/editor
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/pic6.jpg
-gcloud functions logs read process-image --region=us-central1 --limit=5
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/pic6.jpg
-gcloud functions logs read process-image --region=us-central1 --limit=5
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/datastore.user
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/firebase.admin
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/cloudplatform.viewer
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/editor
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/pic7.jpg
-gcloud functions logs read process-image --region=us-central1 --limit=5
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/editor
-gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/pic8.jpg
-gcloud functions logs read process-image --region=us-central1 --limit=5
-gcloud projects add-iam-policy-binding week9-491219   --member=serviceAccount:903582864029-compute@developer.gserviceaccount.com   --role=roles/datastore.owner
 gcloud storage cp ~/pic.jpg gs://week9-491219-image-pipeline/pic9.jpg
 gcloud functions logs read process-image --region=us-central1 --limit=5
 gcloud storage cp ~/pic2.jpg gs://week9-491219-image-pipeline/pic10.jpg
@@ -509,3 +281,227 @@ git rm -r --cached .cache
 nano .gitignore
 git add .
 git commit -m "Remove terraform binaries and cache"
+rm -rf .git
+git init
+git add .
+git commit -m "clean repo"
+git branch -M main
+git remote add origin https://github.com/arpitag2025/RiskPredictionSystem.git
+git push -u origin main
+python3 app.py
+clear
+ls
+python3 app.py
+ls
+cd image-pipelin
+cd image-pipeline
+ls
+nano main.py
+cd ..
+rm  image-pipeline
+rmdir image-pipeline
+cd image-pipeline
+rm main.py
+rm requirements.txt
+cd ..
+rmdir image-pipeline
+clear
+ls
+cd terraform-lab
+ls
+rm variables.tf
+rm terraform.tfstate.backuo
+rm terraform.tfstate.backup
+terraform.tfstate
+rm terraform.tfstate
+ls
+rm outputs.tf
+rm main.tf
+cd ..
+rm terraform-lab
+rmdir terraform-lab
+clear
+cd terraform-lab
+ls
+cd ..
+ls 
+nano app.py
+nano sentiment_test.py
+rm sentiment_test.py
+nano app.py
+clear
+cat app.py
+cd ..
+nano app.py
+nANO.APPY
+nano app.py
+clear
+gcloud config set project week14-495417
+nano app.py
+pwd
+ls
+mkdir week14-lab
+cd week14-lab
+pwd
+touch app.py Dockerfile requirements.txt cloudbuild.yaml
+nano app.py
+nano requirements.txt
+nano Dockerfile 
+nano cloudbuild.yaml
+gcloud services enable cloudbuild.googleapis.com run.googleapis.com artifactregistry.googleapis.com
+clear
+cd ..
+ls
+rm week14-lab
+rmdir week14-lab
+cd week14-lab
+rm Dockerfile
+ls
+rm requirements.txt
+rm cloudbuild.yaml
+rm app.py
+cd ..
+rmdir week14-lab
+gcloud config set project week9-491219
+ls
+cd week9lab
+cd terraform-lab
+ls
+cd ..
+mkdir week9
+cd week9
+clear
+gcloud config set project week9-491219
+mkdir week14-lab
+cd week14-lab
+touch app.py Dockerfile requirements.txt cloudbuild.yaml
+nano app.py
+nano Dockerfile
+nano requirements.txt
+nano cloudbuild.yaml
+gcloud services enable cloudbuild.googleapis.com run.googleapis.com artifactregistry.googleapis.com
+PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
+SA=${PROJECT_NUMBER}-compute@developer.gserviceaccount.com
+gcloud projects add-iam-policy-binding $PROJECT_ID   --member="serviceAccount:$SA" --role="roles/run.admin"
+gcloud projects add-iam-policy-binding $PROJECT_ID   --member="serviceAccount:$SA" --role="roles/iam.serviceAccountUser"
+gcloud projects add-iam-policy-binding $PROJECT_ID   --member="serviceAccount:$SA" --role="roles/artifactregistry.writer"
+clear
+903582864029=$(gcloud projects describe $week9-491219 --format='value(projectNumber)')
+SA=${903582864029}-compute@developer.gserviceaccount.com
+gcloud projects add-iam-policy-binding $week9-491219   --member="serviceAccount:$SA" --role="roles/run.admin"
+gcloud projects add-iam-policy-binding $week9-491219   --member="serviceAccount:$SA" --role="roles/iam.serviceAccountUser"
+gcloud projects add-iam-policy-binding $week9-491219   --member="serviceAccount:$SA" --role="roles/artifactregistry.writer"
+PROJECT_ID=week9-491219
+PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
+SA=${PROJECT_NUMBER}-compute@developer.gserviceaccount.com
+echo $PROJECT_ID
+echo $PROJECT_NUMBER
+echo $SA
+gcloud projects add-iam-policy-binding $PROJECT_ID   --member="serviceAccount:$SA"   --role="roles/run.admin"
+gcloud projects add-iam-policy-binding $PROJECT_ID   --member="serviceAccount:$SA"   --role="roles/iam.serviceAccountUser"
+gcloud projects add-iam-policy-binding $PROJECT_ID   --member="serviceAccount:$SA"   --role="roles/artifactregistry.writer"
+gcloud artifacts repositories create labs   --repository-format=docker   --location=us-central1
+gcloud builds submit --config cloudbuild.yaml .
+gcloud auth configure-docker us-central1-docker.pkg.dev
+gcloud builds submit --config cloudbuild.yaml .
+cat cloudbuild.yaml
+cat Dockerfile
+cat requirements.txt
+cat app.py
+gcloud builds log ee3a859e-39bc-4347-ab99-605a34453c25
+nano app.py
+gcloud builds submit --config cloudbuild.yaml .
+ls
+cd week14-lab
+gcloud builds submit --config cloudbuild.yaml .
+gcloud config set project week9-491219
+gcloud builds submit --config cloudbuild.yaml .
+gcloud builds log 61e48b9d-8d35-417a-a245-957f16ee726c
+gcloud config get-value project
+gcloud artifacts repositories list --location=us-central1
+cat cloudbuild.yaml
+cat > cloudbuild.yaml <<'EOF'
+steps:
+  - name: 'python:3.12-slim'
+    entrypoint: 'bash'
+    args: ['-c', 'pip install -r requirements.txt && pip install pytest && pytest -q || true']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build','-t',
+           'us-central1-docker.pkg.dev/week9-491219/labs/ship-it:latest', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push',
+           'us-central1-docker.pkg.dev/week9-491219/labs/ship-it:latest']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: ['run','deploy','ship-it',
+           '--image','us-central1-docker.pkg.dev/week9-491219/labs/ship-it:latest',
+           '--region','us-central1',
+           '--allow-unauthenticated']
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+EOF
+
+nano cloudbuild.yaml
+gcloud builds submit --config cloudbuild.yaml .
+URL=$(gcloud run services describe ship-it \
+  --region us-central1 \
+  --format='value(status.url)')
+echo $URL
+curl $URL
+curl $URL/guess/42
+curl $URL/guess/75
+echo $URL
+curl $URL
+curl $URL/guess/42
+gcloud run services delete ship-it --region us-central1 --quiet
+gcloud artifacts repositories delete labs --location us-central1 --quiet
+gcloud config set project riskpredictionsystem
+ls
+cat app.py
+nano app.py
+pip install numpy scikit-learn
+python app.py
+ls
+cd templates
+nano index.html
+cat index.html
+nano index.html
+cd ..
+python app.py
+cd templates 
+rm index.html
+nano index.html
+cd ..
+python app.py
+gcloud config set project
+gcloud config set project riskpredictionsystem
+gcloud auth application-default login
+gcloud config set project riskpredictionsystem
+python app.py
+nano requirements.txt
+nano Dockerfile
+docker build -t healthcare-risk-app .
+docker run -p 8080:8080 healthcare-risk-app
+ls
+cd templates
+nano index.html
+cd ..
+python app.py
+clear
+python app.py
+ls
+python app.py
+ls
+nano Dockerfile
+nano deployment.yaml
+python app.py
+clear
+python app.py
+clear
+nano app.py
+nano requirements.txt
+git status

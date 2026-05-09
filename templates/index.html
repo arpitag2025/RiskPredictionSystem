@@ -1,20 +1,179 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Healthcare Dashboard</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <title>Healthcare Risk Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f3e8ff, #faf5ff);
+            color: #2e1065;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6d28d9;
+            font-size: 36px;
+        }
+
+        .controls {
+            margin-bottom: 25px;
+        }
+
+        button {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            margin: 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #5b21b6;
+        }
+
+        input {
+            padding: 11px;
+            border-radius: 8px;
+            border: 1px solid #a855f7;
+            font-size: 16px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin: 25px 0;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #2e1065;
+        }
+
+        .card p {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .chart-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        #riskChart {
+            max-height: 260px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        th {
+            background: #6d28d9;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .HIGH {
+            color: red;
+            font-weight: bold;
+        }
+
+        .MEDIUM {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .LOW {
+            color: green;
+            font-weight: bold;
+        }
+
+        .anomaly {
+            background: #ede9fe;
+            color: #5b21b6;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
 </head>
+
 <body>
 
 <h1>Healthcare Risk Dashboard</h1>
 
-<button onclick="getAnalyze()">Analyze All</button>
+<div class="controls">
+    <button onclick="getAnalyze()">Analyze All</button>
 
-<input id="stateInput" placeholder="Enter state (CA)">
-<button onclick="getFiltered()">Filter</button>
+    <input id="stateInput" placeholder="CA">
+    <button onclick="getFiltered()">Filter</button>
 
-<button onclick="getHighRisk()">High Risk</button>
-<button onclick="getSummary()">Summary</button>
+    <button onclick="getHighRisk()">High Risk</button>
+    <button onclick="getSummary()">Summary</button>
+</div>
+
+<div id="message"></div>
+
+<div class="cards">
+    <div class="card">
+        <h3>Total Providers</h3>
+        <p id="totalProviders">-</p>
+    </div>
+
+    <div class="card">
+        <h3>Average Risk</h3>
+        <p id="avgRisk">-</p>
+    </div>
+
+    <div class="card">
+        <h3>Median Risk</h3>
+        <p id="medianRisk">-</p>
+    </div>
+
+    <div class="card">
+        <h3>High Risk %</h3>
+        <p id="highRiskPercent">-</p>
+    </div>
+</div>
+
+<div class="chart-box">
+    <canvas id="riskChart"></canvas>
+</div>
 
 <table id="table">
     <thead>
@@ -25,71 +184,190 @@
             <th>Medicare</th>
             <th>Risk Score</th>
             <th>Risk Level</th>
+            <th>ML</th>
         </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+        <tr>
+            <td colspan="7">Loading data...</td>
+        </tr>
+    </tbody>
 </table>
 
 <script>
+let chart = null;
+
+function showMessage(text, isError = false) {
+    const message = document.getElementById("message");
+    message.innerHTML = text ? `<p class="${isError ? 'error' : ''}">${text}</p>` : "";
+}
+
+function formatNumber(value) {
+    if (value === undefined || value === null || isNaN(Number(value))) {
+        return "-";
+    }
+
+    return Number(value).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
 function renderTable(data) {
     const tbody = document.querySelector("#table tbody");
     tbody.innerHTML = "";
 
+    if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7">No data found.</td></tr>`;
+        return;
+    }
+
     data.forEach(item => {
-        let row = `
+        const hospital = item.hospital || "-";
+        const state = item.state || "-";
+        const totalPayment = formatNumber(item.total_payment);
+        const medicarePayment = formatNumber(item.medicare_payment);
+        const riskScore = formatNumber(item.risk_score);
+        const riskLevel = item.risk_level || "HIGH";
+        const mlStatus = item.ml_anomaly ? `<span class="anomaly">Anomaly</span>` : "Normal";
+
+        tbody.innerHTML += `
             <tr>
-                <td>${item.hospital}</td>
-                <td>${item.state}</td>
-                <td>${item.total_payment}</td>
-                <td>${item.medicare_payment}</td>
-                <td>${item.risk_score}</td>
-                <td class="${item.risk_level.toLowerCase()}">${item.risk_level}</td>
+                <td>${hospital}</td>
+                <td>${state}</td>
+                <td>${totalPayment}</td>
+                <td>${medicarePayment}</td>
+                <td>${riskScore}</td>
+                <td class="${riskLevel}">${riskLevel}</td>
+                <td>${mlStatus}</td>
             </tr>
         `;
-        tbody.innerHTML += row;
     });
 }
 
 function getAnalyze() {
-    fetch('/analyze')
-        .then(res => res.json())
-        .then(data => renderTable(data.data));
+    showMessage("Loading all provider data...");
+
+    fetch("/analyze")
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "error") {
+                showMessage(data.message, true);
+                return;
+            }
+
+            renderTable(data.data);
+            showMessage(`Loaded ${data.count} providers.`);
+        })
+        .catch(error => {
+            showMessage("Analyze failed: " + error, true);
+        });
 }
 
 function getFiltered() {
-    const state = document.getElementById("stateInput").value;
+    const state = document.getElementById("stateInput").value.trim().toUpperCase();
+
+    if (!state) {
+        showMessage("Enter a state abbreviation like CA, TX, or NY.", true);
+        return;
+    }
+
+    showMessage(`Loading providers for ${state}...`);
+
     fetch(`/analyze?state=${state}`)
-        .then(res => res.json())
-        .then(data => renderTable(data.data));
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "error") {
+                showMessage(data.message, true);
+                return;
+            }
+
+            renderTable(data.data);
+            showMessage(`Loaded ${data.count} providers for ${state}.`);
+        })
+        .catch(error => {
+            showMessage("Filter failed: " + error, true);
+        });
 }
 
 function getHighRisk() {
-    fetch('/high-risk')
-        .then(res => res.json())
-        .then(data => renderTable(data.high_risk_providers));
+    showMessage("Loading high-risk providers...");
+
+    fetch("/high-risk")
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "error") {
+                showMessage(data.message, true);
+                return;
+            }
+
+            renderTable(data.high_risk_providers);
+            showMessage(`Loaded ${data.count} high-risk providers.`);
+        })
+        .catch(error => {
+            showMessage("High-risk request failed: " + error, true);
+        });
 }
 
 function getSummary() {
-    fetch('/summary')
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.querySelector("#table tbody");
-            tbody.innerHTML = "";
+    showMessage("Loading summary metrics...");
 
-            data.summary.forEach(item => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>State Avg</td>
-                        <td>${item.provider_state}</td>
-                        <td>${item.avg_payment}</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                    </tr>
-                `;
+    fetch("/summary")
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "error") {
+                showMessage(data.message, true);
+                return;
+            }
+
+            const m = data.metrics;
+
+            document.getElementById("totalProviders").innerText = m.total_providers;
+            document.getElementById("avgRisk").innerText = formatNumber(m.average_risk_score);
+            document.getElementById("medianRisk").innerText = formatNumber(m.median_risk_score);
+            document.getElementById("highRiskPercent").innerText = formatNumber(m.high_risk_percent) + "%";
+
+            const chartData = [
+                m.distribution.high,
+                m.distribution.medium,
+                m.distribution.low
+            ];
+
+            if (chart !== null) {
+                chart.destroy();
+            }
+
+            chart = new Chart(document.getElementById("riskChart"), {
+                type: "doughnut",
+                data: {
+                    labels: ["High", "Medium", "Low"],
+                    datasets: [{
+                        data: chartData,
+                        backgroundColor: ["#7c3aed", "#c084fc", "#ddd6fe"]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "Risk Level Distribution"
+                        }
+                    }
+                }
             });
+
+            showMessage("Summary metrics loaded.");
+        })
+        .catch(error => {
+            showMessage("Summary failed: " + error, true);
         });
 }
+
+window.onload = function() {
+    getSummary();
+    getAnalyze();
+};
 </script>
 
 </body>
